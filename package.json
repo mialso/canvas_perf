@@ -4,15 +4,28 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "webpack",
+    "build:watch": "webpack --watch",
+    "eslint": "eslint --ext js src/",
+    "dev:server": "http-server -p 8099 dist/",
+    "dev:graph": "madge --image graph.svg src/",
+    "dev:orphans": "madge --orphans src/",
+    "dev:leaves": "madge --leaves src/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "mialso",
   "license": "ISC",
   "dependencies": {
+    "redux-devtools-extension": "2.13.8",
     "redux": "4.0.5"
   },
   "devDependencies": {
+    "eslint": "7.2.0",
+    "eslint-config-airbnb-base": "14.2.0",
+    "eslint-import-resolver-webpack": "0.12.2",
+    "eslint-plugin-import": "2.22.0",
     "http-server": "0.12.3",
+    "madge": "3.9.2",
     "webpack": "4.43.0",
     "webpack-cli": "3.3.12"
   }

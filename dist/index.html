@@ -6,13 +6,16 @@
         <style type="text/css">
             canvas { border: 1px solid black; }
             .ControlPanel { display: flex; align-items: center; justify-content: center }
-            .MapMover { position: absolute; width: 100px; height: 100px; bottom: 0; right: 0; background-color: grey }
+            .MapMover { position: absolute; width: 100px; height: 100px; bottom: 20px; right: 20px; background-color: grey }
+            .PerfMeter { position: absolute; top: 20px; right: 20px; background-color: yellow; }
+            .PerfMeterInfo { min-height: 20px; width: 100% }
         </style>
     </head>
     <body>
         <p>Hello there</p>
         <div class="ControlPanel"></div>
         <div class="MapMover"></div>
+        <div class="PerfMeter"></div>
         <canvas id="perfMe" width="750" height="750"></canvas>
         <script src="main.js"></script>
     </body>

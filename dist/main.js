@@ -86,6 +86,18 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./node_modules/redux-devtools-extension/index.js":
+/*!********************************************************!*\
+  !*** ./node_modules/redux-devtools-extension/index.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\n\nvar compose = __webpack_require__(/*! redux */ \"./node_modules/redux/es/redux.js\").compose;\n\nexports.__esModule = true;\nexports.composeWithDevTools = (\n  typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ?\n    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ :\n    function() {\n      if (arguments.length === 0) return undefined;\n      if (typeof arguments[0] === 'object') return compose;\n      return compose.apply(null, arguments);\n    }\n);\n\nexports.devToolsEnhancer = (\n  typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION__ ?\n    window.__REDUX_DEVTOOLS_EXTENSION__ :\n    function() { return function(noop) { return noop; } }\n);\n\n\n//# sourceURL=webpack:///./node_modules/redux-devtools-extension/index.js?");
+
+/***/ }),
+
 /***/ "./node_modules/redux/es/redux.js":
 /*!****************************************!*\
   !*** ./node_modules/redux/es/redux.js ***!
@@ -152,7 +164,19 @@ eval("module.exports = function(originalModule) {\n\tif (!originalModule.webpack
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _store_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./store/index */ \"./src/store/index.js\");\n/* harmony import */ var _smile_message__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./smile/message */ \"./src/smile/message.js\");\n\n\n\nconst store = Object(_store_index__WEBPACK_IMPORTED_MODULE_0__[\"initStore\"])();\n\nconst Rect = (ctx) => {\n    ctx.fillRect(25, 25, 100, 100);\n    ctx.clearRect(45, 45, 60, 60);\n    ctx.strokeRect(50, 50, 50, 50);\n}\n\nconst Smile = ({ center: c }) => (ctx) => {\n    const { radius: r } = { radius: 50 };\n\n    ctx.beginPath();\n    // outer circle\n    ctx.arc(c.x, c.y, r, 0, Math.PI * 2, true);\n    // mouth\n    ctx.moveTo(c.x + 35, c.y);\n    ctx.arc(c.x, c.y, r - 15, 0, Math.PI, false);\n    // left eye\n    ctx.moveTo(c.x - 10, c.y - 10);\n    ctx.arc(c.x - 15, c.y - 10, 5, 0, Math.PI * 2, true);\n    // right eye\n    ctx.moveTo(c.x + 20, c.y - 10);\n    ctx.arc(c.x + 15, c.y - 10, 5, 0, Math.PI * 2, true);\n    ctx.stroke();\n}\n\nconst draw = (ctx) => () => {\n    console.info('DRAW')\n    ctx.clearRect(0, 0, 750, 750)\n\n    const { items } = store.getState()\n    items.map(center => Smile({ center })).forEach(item => item(ctx))\n}\n\nfunction createButton({ text, onclick }) {\n    const button = document.createElement('button');\n    button.innerText = text;\n    button.onclick = onclick;\n    return button;\n}\n\nfunction initButtons() {\n    const controlPanel = document.querySelector('.ControlPanel');\n    const moveLeftButton = createButton({ text: 'move left', onclick: () => store.dispatch(Object(_smile_message__WEBPACK_IMPORTED_MODULE_1__[\"moveSmileLeft\"])()) });\n\n    const moveRightButton = createButton({ text: 'move right', onclick: () => store.dispatch(Object(_smile_message__WEBPACK_IMPORTED_MODULE_1__[\"moveSmileRight\"])()) });\n    controlPanel.appendChild(moveLeftButton);\n    controlPanel.appendChild(moveRightButton);\n}\n\nfunction initMover() {\n    const mover = document.querySelector('.MapMover');\n    let isMoving = false;\n    mover.addEventListener('mousedown', () => {\n        isMoving = true;\n    });\n    mover.addEventListener('mousemove', (e) => {\n        if (!isMoving) {\n            return;\n        }\n        console.info('MOVING: %s, %s', e.offsetX, e.offsetY)\n    });\n    mover.addEventListener('mouseup', () => {\n        isMoving = false;\n    });\n}\n\ndocument.addEventListener('DOMContentLoaded', function() {\n    const canvas = document.getElementById('perfMe');\n    const ctx = canvas.getContext('2d');\n    initButtons()\n    initMover()\n    store.subscribe(draw(ctx))\n});\n\n\n//# sourceURL=webpack:///./src/index.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var store_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! store/index */ \"./src/store/index.js\");\n/* harmony import */ var ui_Mover__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ui/Mover */ \"./src/ui/Mover.js\");\n/* harmony import */ var ui_Toolbar__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ui/Toolbar */ \"./src/ui/Toolbar.js\");\n/* harmony import */ var ui_Canvas__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ui/Canvas */ \"./src/ui/Canvas.js\");\n/* harmony import */ var ui_PerfMeter__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ui/PerfMeter */ \"./src/ui/PerfMeter.js\");\n\n\n\n\n\n\nfunction runApplication() {\n    // create store first\n    const store = Object(store_index__WEBPACK_IMPORTED_MODULE_0__[\"initStore\"])();\n    // create the ui\n    Object(ui_Mover__WEBPACK_IMPORTED_MODULE_1__[\"createMover\"])(store)(document.querySelector('.MapMover'));\n    Object(ui_Toolbar__WEBPACK_IMPORTED_MODULE_2__[\"createToolbar\"])(store)(document.querySelector('.ControlPanel'));\n    const updatePerfMeter = Object(ui_PerfMeter__WEBPACK_IMPORTED_MODULE_4__[\"createPerfMeter\"])(store)(document.querySelector('.PerfMeter'));\n    // create canvas\n    const drawCanvas = Object(ui_Canvas__WEBPACK_IMPORTED_MODULE_3__[\"createCanvas\"])(store)(document.getElementById('perfMe'));\n\n    // render canvas first time\n    drawCanvas();\n    // subscribe to subsequent state updates\n    // note - those are gonna be called on each \"dispatch(message)\" regardless state change\n    store.subscribe(drawCanvas);\n    store.subscribe(updatePerfMeter);\n}\n\ndocument.addEventListener('DOMContentLoaded', runApplication);\n\n\n//# sourceURL=webpack:///./src/index.js?");
+
+/***/ }),
+
+/***/ "./src/smile/itemCreator.js":
+/*!**********************************!*\
+  !*** ./src/smile/itemCreator.js ***!
+  \**********************************/
+/*! exports provided: createSmiles, colorItems */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"createSmiles\", function() { return createSmiles; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"colorItems\", function() { return colorItems; });\n/* harmony import */ var _model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./model */ \"./src/smile/model.js\");\n\n\nconst SCREEN_WIDTH = 750;\nconst SCREEN_HEIGHT = 750;\n\nfunction createSmiles({ perLine, lines }) {\n    const spaceItem = SCREEN_WIDTH / (perLine + 1);\n    const spaceLine = SCREEN_HEIGHT / (lines + 1);\n    const items = [];\n    for (let i = 0; i < lines; ++i) {\n        for (let j = 0; j < perLine; ++j) {\n            const item = {\n                x: spaceItem + (i * spaceItem),\n                y: spaceLine + (j * spaceLine),\n            };\n            items.push(item);\n        }\n    }\n    return items;\n}\n\nfunction colorItems(items) {\n    items.forEach((item) => {\n        const colorIndex = (item.x + item.y) % 3;\n        item.color = _model__WEBPACK_IMPORTED_MODULE_0__[\"COLORS\"][colorIndex];\n    });\n}\n\n\n//# sourceURL=webpack:///./src/smile/itemCreator.js?");
 
 /***/ }),
 
@@ -168,6 +192,18 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) *
 
 /***/ }),
 
+/***/ "./src/smile/model.js":
+/*!****************************!*\
+  !*** ./src/smile/model.js ***!
+  \****************************/
+/*! exports provided: COLOR_RED, COLOR_BLUE, COLOR_GREEN, COLORS */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"COLOR_RED\", function() { return COLOR_RED; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"COLOR_BLUE\", function() { return COLOR_BLUE; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"COLOR_GREEN\", function() { return COLOR_GREEN; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"COLORS\", function() { return COLORS; });\nconst COLOR_RED = 'RED';\nconst COLOR_BLUE = 'BLUE';\nconst COLOR_GREEN = 'GREEN';\n\nconst COLORS = [COLOR_RED, COLOR_BLUE, COLOR_GREEN];\n\n\n//# sourceURL=webpack:///./src/smile/model.js?");
+
+/***/ }),
+
 /***/ "./src/smile/reducer.js":
 /*!******************************!*\
   !*** ./src/smile/reducer.js ***!
@@ -176,7 +212,19 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) *
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"smileReducer\", function() { return smileReducer; });\n/* harmony import */ var _message__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./message */ \"./src/smile/message.js\");\n\n\nconst initialState = {\n    items: [\n        {x: 75, y: 75},\n        {x: 275, y: 75},\n    ],\n};\n\nfunction smileReducer(state = initialState, message) {\n    switch(message.type) {\n        case _message__WEBPACK_IMPORTED_MODULE_0__[\"MOVE_SMILE_LEFT\"]: {\n            state.items.forEach((smile) => {\n                smile.x -= 5;\n            });\n            return state;\n        }\n        case _message__WEBPACK_IMPORTED_MODULE_0__[\"MOVE_SMILE_RIGHT\"]: {\n            state.items.forEach((smile) => {\n                smile.x += 5;\n            });\n            return state;\n        }\n        default: return state;\n    }\n}\n\n\n//# sourceURL=webpack:///./src/smile/reducer.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"smileReducer\", function() { return smileReducer; });\n/* harmony import */ var smile_message__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! smile/message */ \"./src/smile/message.js\");\n/* harmony import */ var smile_itemCreator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! smile/itemCreator */ \"./src/smile/itemCreator.js\");\n\n\n\nconst DEFAULT_SPEED = 5;\n\nconst initialState = {\n    speed: DEFAULT_SPEED,\n    items: Object(smile_itemCreator__WEBPACK_IMPORTED_MODULE_1__[\"createSmiles\"])({ lines: 3, perLine: 3 }),\n};\n\nfunction mutateMoveLeft(items) {\n    items.forEach((smile) => {\n        smile.x -= 5;\n    });\n}\n\nfunction mutateMoveRight(items) {\n    items.forEach((smile) => {\n        smile.x += 5;\n    });\n}\n\nfunction smileReducer(state = initialState, message) {\n    switch (message.type) {\n    case smile_message__WEBPACK_IMPORTED_MODULE_0__[\"MOVE_SMILE_LEFT\"]: {\n        mutateMoveLeft(state.items);\n        return state;\n    }\n    case smile_message__WEBPACK_IMPORTED_MODULE_0__[\"MOVE_SMILE_RIGHT\"]: {\n        mutateMoveRight(state.items);\n        return state;\n    }\n    default: return state;\n    }\n}\n\n\n//# sourceURL=webpack:///./src/smile/reducer.js?");
+
+/***/ }),
+
+/***/ "./src/smile/selector.js":
+/*!*******************************!*\
+  !*** ./src/smile/selector.js ***!
+  \*******************************/
+/*! exports provided: smileItems, smileItemsCount */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"smileItems\", function() { return smileItems; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"smileItemsCount\", function() { return smileItemsCount; });\nconst smileItems = (state) => state.smile.items;\nconst smileItemsCount = (state) => state.smile.items.length;\n\n\n//# sourceURL=webpack:///./src/smile/selector.js?");
 
 /***/ }),
 
@@ -188,7 +236,103 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) *
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"initStore\", function() { return initStore; });\n/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! redux */ \"./node_modules/redux/es/redux.js\");\n/* harmony import */ var _smile_reducer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../smile/reducer */ \"./src/smile/reducer.js\");\n\n\n\nconst simpleLogger = () => {\n    console.info('STORE');\n};\n\nfunction initStore() {\n    const store = Object(redux__WEBPACK_IMPORTED_MODULE_0__[\"createStore\"])(_smile_reducer__WEBPACK_IMPORTED_MODULE_1__[\"smileReducer\"]);\n    store.subscribe(simpleLogger);\n    return store;\n}\n\n\n//# sourceURL=webpack:///./src/store/index.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"initStore\", function() { return initStore; });\n/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! redux */ \"./node_modules/redux/es/redux.js\");\n/* harmony import */ var redux_devtools_extension__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! redux-devtools-extension */ \"./node_modules/redux-devtools-extension/index.js\");\n/* harmony import */ var redux_devtools_extension__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(redux_devtools_extension__WEBPACK_IMPORTED_MODULE_1__);\n/* harmony import */ var smile_reducer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! smile/reducer */ \"./src/smile/reducer.js\");\n/* harmony import */ var ui_controller__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ui/controller */ \"./src/ui/controller.js\");\n/* harmony import */ var ui_PerfMeter__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ui/PerfMeter */ \"./src/ui/PerfMeter.js\");\n\n\n\n\n\n\nfunction connectController(controller) {\n    return (store) => (next) => (message) => {\n        next(message);\n        controller(store, message);\n    };\n}\n\nconst middlewares = [\n    ui_controller__WEBPACK_IMPORTED_MODULE_3__[\"moverController\"],\n    ui_PerfMeter__WEBPACK_IMPORTED_MODULE_4__[\"perfMeterController\"],\n].map(connectController);\n\nconst appReducer = Object(redux__WEBPACK_IMPORTED_MODULE_0__[\"combineReducers\"])({\n    smile: smile_reducer__WEBPACK_IMPORTED_MODULE_2__[\"smileReducer\"],\n    ui: Object(redux__WEBPACK_IMPORTED_MODULE_0__[\"combineReducers\"])({\n        [ui_PerfMeter__WEBPACK_IMPORTED_MODULE_4__[\"PERF_METER_KEY\"]]: ui_PerfMeter__WEBPACK_IMPORTED_MODULE_4__[\"perfMeterReducer\"],\n        mover: ui_controller__WEBPACK_IMPORTED_MODULE_3__[\"moverReducer\"],\n    }),\n});\n\nfunction initStore() {\n    const middlewareEnchancer = Object(redux__WEBPACK_IMPORTED_MODULE_0__[\"applyMiddleware\"])(...middlewares);\n    const composedEnchancer = Object(redux_devtools_extension__WEBPACK_IMPORTED_MODULE_1__[\"composeWithDevTools\"])(middlewareEnchancer);\n\n    const store = Object(redux__WEBPACK_IMPORTED_MODULE_0__[\"createStore\"])(appReducer, composedEnchancer);\n    return store;\n}\n\n\n//# sourceURL=webpack:///./src/store/index.js?");
+
+/***/ }),
+
+/***/ "./src/ui/Button.js":
+/*!**************************!*\
+  !*** ./src/ui/Button.js ***!
+  \**************************/
+/*! exports provided: createButton */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"createButton\", function() { return createButton; });\nfunction createButton({ text, onclick }) {\n    const button = document.createElement('button');\n    button.innerText = text;\n    button.onclick = onclick;\n    return button;\n}\n\n\n//# sourceURL=webpack:///./src/ui/Button.js?");
+
+/***/ }),
+
+/***/ "./src/ui/Canvas.js":
+/*!**************************!*\
+  !*** ./src/ui/Canvas.js ***!
+  \**************************/
+/*! exports provided: draw, createCanvas */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"draw\", function() { return draw; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"createCanvas\", function() { return createCanvas; });\n/* harmony import */ var ui_Smile__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ui/Smile */ \"./src/ui/Smile.js\");\n/* harmony import */ var smile_selector__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! smile/selector */ \"./src/smile/selector.js\");\n\n\n\nconst draw = ({ ctx, getState }) => () => {\n    console.info('DRAW');\n    ctx.clearRect(0, 0, 750, 750);\n\n    const items = Object(smile_selector__WEBPACK_IMPORTED_MODULE_1__[\"smileItems\"])(getState());\n\n    // create actual canvas-ui objects from state and draw them\n    items.map((center) => Object(ui_Smile__WEBPACK_IMPORTED_MODULE_0__[\"CanvasSmile\"])({ center })).forEach((item) => item(ctx));\n};\n\nconst createCanvas = ({ getState }) => (canvasElem) => {\n    const ctx = canvasElem.getContext('2d');\n    return draw({ ctx, getState });\n};\n\n\n//# sourceURL=webpack:///./src/ui/Canvas.js?");
+
+/***/ }),
+
+/***/ "./src/ui/Mover.js":
+/*!*************************!*\
+  !*** ./src/ui/Mover.js ***!
+  \*************************/
+/*! exports provided: createMover */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"createMover\", function() { return createMover; });\n/* harmony import */ var ui_message__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ui/message */ \"./src/ui/message.js\");\n/* harmony import */ var ui_controller__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ui/controller */ \"./src/ui/controller.js\");\n\n\n\nconst createMover = ({ dispatch, getState }) => (moverElem) => {\n    moverElem.addEventListener('mousedown', () => dispatch(Object(ui_message__WEBPACK_IMPORTED_MODULE_0__[\"moverOn\"])()));\n    moverElem.addEventListener('mousemove', (e) => {\n        if (Object(ui_controller__WEBPACK_IMPORTED_MODULE_1__[\"isMoverOn\"])(getState())) {\n            dispatch(Object(ui_message__WEBPACK_IMPORTED_MODULE_0__[\"moverStep\"])(e.offsetX));\n        }\n    });\n    moverElem.addEventListener('mouseup', () => dispatch(Object(ui_message__WEBPACK_IMPORTED_MODULE_0__[\"moverOff\"])()));\n    moverElem.addEventListener('mouseout', () => {\n        if (Object(ui_controller__WEBPACK_IMPORTED_MODULE_1__[\"isMoverOn\"])(getState())) {\n            dispatch(Object(ui_message__WEBPACK_IMPORTED_MODULE_0__[\"moverOff\"])());\n        }\n    });\n};\n\n\n//# sourceURL=webpack:///./src/ui/Mover.js?");
+
+/***/ }),
+
+/***/ "./src/ui/PerfMeter.js":
+/*!*****************************!*\
+  !*** ./src/ui/PerfMeter.js ***!
+  \*****************************/
+/*! exports provided: PERF_METER_KEY, PERF_METER_ENABLE, PERF_METER_DISABLE, PERF_METER_CLEAR, PERF_METER_SET_CANVAS_RENDER, perfMeterEnable, perfMeterDisable, perfMeterClear, perfMeterSetCanvasRender, perfMeterReducer, perfMeterController, createPerfMeter */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"PERF_METER_KEY\", function() { return PERF_METER_KEY; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"PERF_METER_ENABLE\", function() { return PERF_METER_ENABLE; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"PERF_METER_DISABLE\", function() { return PERF_METER_DISABLE; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"PERF_METER_CLEAR\", function() { return PERF_METER_CLEAR; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"PERF_METER_SET_CANVAS_RENDER\", function() { return PERF_METER_SET_CANVAS_RENDER; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"perfMeterEnable\", function() { return perfMeterEnable; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"perfMeterDisable\", function() { return perfMeterDisable; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"perfMeterClear\", function() { return perfMeterClear; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"perfMeterSetCanvasRender\", function() { return perfMeterSetCanvasRender; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"perfMeterReducer\", function() { return perfMeterReducer; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"perfMeterController\", function() { return perfMeterController; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"createPerfMeter\", function() { return createPerfMeter; });\n/* harmony import */ var smile_message__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! smile/message */ \"./src/smile/message.js\");\n/* harmony import */ var smile_selector__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! smile/selector */ \"./src/smile/selector.js\");\n/* harmony import */ var ui_Button__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ui/Button */ \"./src/ui/Button.js\");\n\n\n\n\nconst PERF_METER_KEY = 'perfMeter';\n\n// messages\nconst PERF_METER_ENABLE = 'PERF_METER_ENABLE';\nconst PERF_METER_DISABLE = 'PERF_METER_DISABLE';\nconst PERF_METER_CLEAR = 'PERF_METER_CLEAR';\nconst PERF_METER_SET_CANVAS_RENDER = 'PERF_METER_SET_CANVAS_RENDER';\nconst perfMeterEnable = () => ({ type: PERF_METER_ENABLE });\nconst perfMeterDisable = () => ({ type: PERF_METER_DISABLE });\nconst perfMeterClear = () => ({ type: PERF_METER_CLEAR });\nconst perfMeterSetCanvasRender = (msec, itemNum) => ({\n    type: PERF_METER_SET_CANVAS_RENDER,\n    payload: { msec, itemNum },\n});\n\n// state shape\nconst initialState = {\n    isEnabled: false,\n    avgMsec: 0,\n    itemNum: 0,\n};\n\n// selectors\nconst getPerfMeterAvgMsec = (state) => state.ui[PERF_METER_KEY].avgMsec;\nconst getPerfMeterItemNum = (state) => state.ui[PERF_METER_KEY].itemNum;\nconst isPerfMeterEnabled = (state) => state.ui[PERF_METER_KEY].isEnabled;\n\n// mutation\nfunction perfMeterReducer(state = initialState, message) {\n    switch (message.type) {\n    case PERF_METER_ENABLE: {\n        return { ...state, isEnabled: true };\n    }\n    case PERF_METER_DISABLE: {\n        return { ...state, isEnabled: false };\n    }\n    case PERF_METER_SET_CANVAS_RENDER: {\n        const { msec, itemNum } = message.payload;\n        return { ...state, avgMsec: msec, itemNum };\n    }\n    case PERF_METER_CLEAR: {\n        return {\n            ...state,\n            isEnabled: false,\n            avgMsec: 0,\n            itemNum: 0,\n        };\n    }\n    default: return state;\n    }\n}\n\n// async controller\nfunction perfMeterController({ getState, dispatch }, message) {\n    switch (message.type) {\n    case smile_message__WEBPACK_IMPORTED_MODULE_0__[\"MOVE_SMILE_RIGHT\"]: {\n        if (isPerfMeterEnabled(getState())) {\n            performance.mark(smile_message__WEBPACK_IMPORTED_MODULE_0__[\"MOVE_SMILE_RIGHT\"]);\n        }\n        break;\n    }\n    case PERF_METER_DISABLE: {\n        const entries = performance.getEntries();\n        const markStartTimes = [];\n        for (let i = 0; i < entries.length; ++i) {\n            if (entries[i].entryType === 'mark') {\n                markStartTimes.push(entries[i].startTime);\n            }\n        }\n        performance.clearMarks();\n        const durationTimes = markStartTimes.reduce(\n            (acc, startTime, index, startTimesArr) => acc.concat({\n                startTime,\n                duration: startTimesArr[index + 1] ? (startTimesArr[index + 1] - startTime) : 0,\n            }),\n            [],\n        ).filter((item) => !!item.duration);\n\n        const itemsQuantity = durationTimes.length;\n        const totalMsec = durationTimes.reduce((acc, item) => acc + item.duration, 0);\n        const averageMsec = totalMsec / itemsQuantity;\n        dispatch(perfMeterSetCanvasRender(averageMsec, itemsQuantity));\n        break;\n    }\n    default:\n    }\n}\n\n// ui update function on state change\nconst updatePerfMeter = ({ info, start, stop }, { getState }) => () => {\n    const state = getState();\n    const avgMsec = getPerfMeterAvgMsec(state) || 0;\n    const itemNum = getPerfMeterItemNum(state) || 0;\n    info.innerText = `avg: ${avgMsec} msec, num: ${itemNum}`;\n\n    const isEnabled = isPerfMeterEnabled(state);\n    if (start.disabled !== isEnabled) {\n        start.disabled = isEnabled;\n    }\n    if (stop.disabled === isEnabled) {\n        stop.disabled = !isEnabled;\n    }\n};\n\nconst createPerfMeter = ({ dispatch, getState }) => (perfMeterElem) => {\n    const perfMeterHeadElem = document.createElement('p');\n    perfMeterHeadElem.innerText = `Performance Meter: ${Object(smile_selector__WEBPACK_IMPORTED_MODULE_1__[\"smileItemsCount\"])(getState())} Smiles`;\n    const perfMeterInfoElem = document.createElement('div');\n    const clearButton = Object(ui_Button__WEBPACK_IMPORTED_MODULE_2__[\"createButton\"])({ text: 'clear', onclick: () => dispatch(perfMeterClear()) });\n    const startButton = Object(ui_Button__WEBPACK_IMPORTED_MODULE_2__[\"createButton\"])({ text: 'enable', onclick: () => dispatch(perfMeterEnable()) });\n    const stopButton = Object(ui_Button__WEBPACK_IMPORTED_MODULE_2__[\"createButton\"])({ text: 'stop', onclick: () => dispatch(perfMeterDisable()) });\n    perfMeterInfoElem.className = 'PerfMeterInfo';\n\n    perfMeterElem.appendChild(perfMeterHeadElem);\n    perfMeterElem.appendChild(perfMeterInfoElem);\n    perfMeterElem.appendChild(clearButton);\n    perfMeterElem.appendChild(startButton);\n    perfMeterElem.appendChild(stopButton);\n    const updateHandler = updatePerfMeter(\n        { info: perfMeterInfoElem, start: startButton, stop: stopButton },\n        { getState },\n    );\n    updateHandler();\n    return updateHandler;\n};\n\n\n//# sourceURL=webpack:///./src/ui/PerfMeter.js?");
+
+/***/ }),
+
+/***/ "./src/ui/Smile.js":
+/*!*************************!*\
+  !*** ./src/ui/Smile.js ***!
+  \*************************/
+/*! exports provided: CanvasSmile */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"CanvasSmile\", function() { return CanvasSmile; });\nconst CanvasSmile = ({ center: c }) => (ctx) => {\n    const { radius: r } = { radius: 50 };\n\n    ctx.beginPath();\n    // outer circle\n    ctx.arc(c.x, c.y, r, 0, Math.PI * 2, true);\n    // mouth\n    ctx.moveTo(c.x + 35, c.y);\n    ctx.arc(c.x, c.y, r - 15, 0, Math.PI, false);\n    // left eye\n    ctx.moveTo(c.x - 10, c.y - 10);\n    ctx.arc(c.x - 15, c.y - 10, 5, 0, Math.PI * 2, true);\n    // right eye\n    ctx.moveTo(c.x + 20, c.y - 10);\n    ctx.arc(c.x + 15, c.y - 10, 5, 0, Math.PI * 2, true);\n    ctx.stroke();\n};\n\n\n//# sourceURL=webpack:///./src/ui/Smile.js?");
+
+/***/ }),
+
+/***/ "./src/ui/Toolbar.js":
+/*!***************************!*\
+  !*** ./src/ui/Toolbar.js ***!
+  \***************************/
+/*! exports provided: createToolbar */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"createToolbar\", function() { return createToolbar; });\n/* harmony import */ var smile_message__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! smile/message */ \"./src/smile/message.js\");\n/* harmony import */ var ui_Button__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ui/Button */ \"./src/ui/Button.js\");\n\n\n\nconst createToolbar = ({ dispatch }) => (toolbarElem) => {\n    const moveLeftButton = Object(ui_Button__WEBPACK_IMPORTED_MODULE_1__[\"createButton\"])({ text: 'move left', onclick: () => dispatch(Object(smile_message__WEBPACK_IMPORTED_MODULE_0__[\"moveSmileLeft\"])()) });\n    const moveRightButton = Object(ui_Button__WEBPACK_IMPORTED_MODULE_1__[\"createButton\"])({ text: 'move right', onclick: () => dispatch(Object(smile_message__WEBPACK_IMPORTED_MODULE_0__[\"moveSmileRight\"])()) });\n    const move10RightButton = Object(ui_Button__WEBPACK_IMPORTED_MODULE_1__[\"createButton\"])({\n        text: 'move 10 right',\n        onclick: () => {\n            for (let i = 0; i < 10; ++i) {\n                dispatch(Object(smile_message__WEBPACK_IMPORTED_MODULE_0__[\"moveSmileRight\"])());\n            }\n        },\n    });\n\n    toolbarElem.appendChild(moveLeftButton);\n    toolbarElem.appendChild(moveRightButton);\n    toolbarElem.appendChild(move10RightButton);\n};\n\n\n//# sourceURL=webpack:///./src/ui/Toolbar.js?");
+
+/***/ }),
+
+/***/ "./src/ui/controller.js":
+/*!******************************!*\
+  !*** ./src/ui/controller.js ***!
+  \******************************/
+/*! exports provided: isMoverOn, moverCoordX, moverController, moverReducer */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"isMoverOn\", function() { return isMoverOn; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"moverCoordX\", function() { return moverCoordX; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"moverController\", function() { return moverController; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"moverReducer\", function() { return moverReducer; });\n/* harmony import */ var ui_message__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ui/message */ \"./src/ui/message.js\");\n/* harmony import */ var smile_message__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! smile/message */ \"./src/smile/message.js\");\n\n\n\nconst initialState = {\n    step: 5,\n    x: {\n        prev: 0,\n        next: 0,\n    },\n    isMoving: false,\n};\n\nconst isMoverOn = (state) => state.ui.mover.isMoving;\nconst moverCoordX = (state) => state.ui.mover.x;\n\nfunction moverController({ dispatch, getState }, message) {\n    switch (message.type) {\n    case ui_message__WEBPACK_IMPORTED_MODULE_0__[\"MOVER_STEP\"]: {\n        const { prev, next } = moverCoordX(getState());\n        if (next > prev) {\n            dispatch(Object(smile_message__WEBPACK_IMPORTED_MODULE_1__[\"moveSmileRight\"])());\n        } else {\n            dispatch(Object(smile_message__WEBPACK_IMPORTED_MODULE_1__[\"moveSmileLeft\"])());\n        }\n        break;\n    }\n    default:\n    }\n}\n\nfunction moverReducer(state = initialState, message) {\n    switch (message.type) {\n    case ui_message__WEBPACK_IMPORTED_MODULE_0__[\"MOVER_ON\"]: return { ...state, isMoving: true };\n    case ui_message__WEBPACK_IMPORTED_MODULE_0__[\"MOVER_OFF\"]: return { ...state, isMoving: false };\n    case ui_message__WEBPACK_IMPORTED_MODULE_0__[\"MOVER_STEP\"]: return {\n        ...state,\n        x: { prev: state.x.next, next: message.payload.offsetX },\n    };\n    default: return state;\n    }\n}\n\n\n//# sourceURL=webpack:///./src/ui/controller.js?");
+
+/***/ }),
+
+/***/ "./src/ui/message.js":
+/*!***************************!*\
+  !*** ./src/ui/message.js ***!
+  \***************************/
+/*! exports provided: MOVER_ON, MOVER_OFF, MOVER_STEP, CANVAS_MOVE, moverOn, moverOff, moverStep, canvasMove */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"MOVER_ON\", function() { return MOVER_ON; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"MOVER_OFF\", function() { return MOVER_OFF; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"MOVER_STEP\", function() { return MOVER_STEP; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"CANVAS_MOVE\", function() { return CANVAS_MOVE; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"moverOn\", function() { return moverOn; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"moverOff\", function() { return moverOff; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"moverStep\", function() { return moverStep; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"canvasMove\", function() { return canvasMove; });\nconst MOVER_ON = 'MOVER_ON';\nconst MOVER_OFF = 'MOVER_OFF';\nconst MOVER_STEP = 'MOVER_STEP';\n\nconst CANVAS_MOVE = 'CANVAS_MOVE';\n\nconst moverOn = () => ({ type: MOVER_ON });\nconst moverOff = () => ({ type: MOVER_OFF });\nconst moverStep = (offsetX) => ({ type: MOVER_STEP, payload: { offsetX } });\n\nconst canvasMove = () => ({ type: CANVAS_MOVE });\n\n\n//# sourceURL=webpack:///./src/ui/message.js?");
 
 /***/ })
 

@@ -1,26 +1,35 @@
-import {MOVE_SMILE_LEFT, MOVE_SMILE_RIGHT} from './message';
+import { MOVE_SMILE_LEFT, MOVE_SMILE_RIGHT } from 'smile/message';
+import { createSmiles } from 'smile/itemCreator';
+
+const DEFAULT_SPEED = 5;
 
 const initialState = {
-    items: [
-        {x: 75, y: 75},
-        {x: 275, y: 75},
-    ],
+    speed: DEFAULT_SPEED,
+    items: createSmiles({ lines: 3, perLine: 3 }),
 };
 
+function mutateMoveLeft(items) {
+    items.forEach((smile) => {
+        smile.x -= 5;
+    });
+}
+
+function mutateMoveRight(items) {
+    items.forEach((smile) => {
+        smile.x += 5;
+    });
+}
+
 export function smileReducer(state = initialState, message) {
-    switch(message.type) {
-        case MOVE_SMILE_LEFT: {
-            state.items.forEach((smile) => {
-                smile.x -= 5;
-            });
-            return state;
-        }
-        case MOVE_SMILE_RIGHT: {
-            state.items.forEach((smile) => {
-                smile.x += 5;
-            });
-            return state;
-        }
-        default: return state;
+    switch (message.type) {
+    case MOVE_SMILE_LEFT: {
+        mutateMoveLeft(state.items);
+        return state;
+    }
+    case MOVE_SMILE_RIGHT: {
+        mutateMoveRight(state.items);
+        return state;
+    }
+    default: return state;
     }
 }
