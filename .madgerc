@@ -1,0 +1,4 @@
+{
+    "tsConfig": "tsconfig.json",
+    "webpackConfig": "webpack.config.js"
+}

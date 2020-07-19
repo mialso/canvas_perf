@@ -1,7 +1,9 @@
 import { MOVER_ON, MOVER_OFF, MOVER_STEP } from 'ui/message';
 import { moveSmileLeft, moveSmileRight } from 'smile/message';
+import { AppMessage, Selector, Controller } from 'store/types';
+import { MoverState, Memo } from 'ui/types';
 
-const initialState = {
+const initialState: MoverState = {
     step: 5,
     x: {
         prev: 0,
@@ -10,10 +12,10 @@ const initialState = {
     isMoving: false,
 };
 
-export const isMoverOn = (state) => state.ui.mover.isMoving;
-export const moverCoordX = (state) => state.ui.mover.x;
+export const isMoverOn: Selector<boolean> = (state) => state.ui.mover.isMoving;
+export const moverCoordX: Selector<Memo<number>> = (state) => state.ui.mover.x;
 
-export function moverController({ dispatch, getState }, message) {
+export const moverController: Controller = ({ dispatch, getState }, message) => {
     switch (message.type) {
     case MOVER_STEP: {
         const { prev, next } = moverCoordX(getState());
@@ -26,9 +28,9 @@ export function moverController({ dispatch, getState }, message) {
     }
     default:
     }
-}
+};
 
-export function moverReducer(state = initialState, message) {
+export function moverReducer(state: MoverState = initialState, message: AppMessage): MoverState {
     switch (message.type) {
     case MOVER_ON: return { ...state, isMoving: true };
     case MOVER_OFF: return { ...state, isMoving: false };

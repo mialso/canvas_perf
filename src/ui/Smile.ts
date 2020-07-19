@@ -1,4 +1,9 @@
-export const CanvasSmile = ({ center: c }) => (ctx) => {
+type Point = {
+    x: number,
+    y: number,
+};
+
+export const CanvasSmile = ({ center: c }: { center: Point }) => (ctx: CanvasRenderingContext2D): void => {
     const { radius: r } = { radius: 50 };
 
     ctx.beginPath();

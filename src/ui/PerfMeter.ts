@@ -1,36 +1,30 @@
 import { MOVE_SMILE_RIGHT } from 'smile/message';
 import { smileItemsCount } from 'smile/selector';
 import { createButton } from 'ui/Button';
-
-export const PERF_METER_KEY = 'perfMeter';
+import {
+    AppStore, AppState, Selector, Controller,
+} from 'store/types';
+import { PerfMeterState } from 'ui/types';
+import {
+    PERF_METER_ENABLE, PERF_METER_DISABLE, PERF_METER_SET_RESULT, PERF_METER_CLEAR,
+    PerfMeterMessage, perfMeterSetResult, perfMeterEnable, perfMeterDisable, perfMeterClear,
+} from 'ui/message';
 
 // messages
-export const PERF_METER_ENABLE = 'PERF_METER_ENABLE';
-export const PERF_METER_DISABLE = 'PERF_METER_DISABLE';
-export const PERF_METER_CLEAR = 'PERF_METER_CLEAR';
-export const PERF_METER_SET_CANVAS_RENDER = 'PERF_METER_SET_CANVAS_RENDER';
-export const perfMeterEnable = () => ({ type: PERF_METER_ENABLE });
-export const perfMeterDisable = () => ({ type: PERF_METER_DISABLE });
-export const perfMeterClear = () => ({ type: PERF_METER_CLEAR });
-export const perfMeterSetCanvasRender = (msec, itemNum) => ({
-    type: PERF_METER_SET_CANVAS_RENDER,
-    payload: { msec, itemNum },
-});
-
 // state shape
-const initialState = {
+const initialState: PerfMeterState = {
     isEnabled: false,
     avgMsec: 0,
     itemNum: 0,
 };
 
 // selectors
-const getPerfMeterAvgMsec = (state) => state.ui[PERF_METER_KEY].avgMsec;
-const getPerfMeterItemNum = (state) => state.ui[PERF_METER_KEY].itemNum;
-const isPerfMeterEnabled = (state) => state.ui[PERF_METER_KEY].isEnabled;
+const getPerfMeterAvgMsec: Selector<number> = (state) => state.ui.perfMeter.avgMsec;
+const getPerfMeterItemNum: Selector<number> = (state) => state.ui.perfMeter.itemNum;
+const isPerfMeterEnabled: Selector<boolean> = (state) => state.ui.perfMeter.isEnabled;
 
 // mutation
-export function perfMeterReducer(state = initialState, message) {
+export function perfMeterReducer(state: PerfMeterState = initialState, message: PerfMeterMessage): PerfMeterState {
     switch (message.type) {
     case PERF_METER_ENABLE: {
         return { ...state, isEnabled: true };
@@ -38,7 +32,7 @@ export function perfMeterReducer(state = initialState, message) {
     case PERF_METER_DISABLE: {
         return { ...state, isEnabled: false };
     }
-    case PERF_METER_SET_CANVAS_RENDER: {
+    case PERF_METER_SET_RESULT: {
         const { msec, itemNum } = message.payload;
         return { ...state, avgMsec: msec, itemNum };
     }
@@ -55,7 +49,7 @@ export function perfMeterReducer(state = initialState, message) {
 }
 
 // async controller
-export function perfMeterController({ getState, dispatch }, message) {
+export const perfMeterController: Controller = ({ getState, dispatch }, message): void => {
     switch (message.type) {
     case MOVE_SMILE_RIGHT: {
         if (isPerfMeterEnabled(getState())) {
@@ -72,26 +66,31 @@ export function perfMeterController({ getState, dispatch }, message) {
             }
         }
         performance.clearMarks();
-        const durationTimes = markStartTimes.reduce(
+        type DurationMark = { startTime: number, duration: number };
+        const durationTimes: DurationMark[] = markStartTimes.reduce(
             (acc, startTime, index, startTimesArr) => acc.concat({
                 startTime,
                 duration: startTimesArr[index + 1] ? (startTimesArr[index + 1] - startTime) : 0,
             }),
-            [],
+            [] as DurationMark[],
         ).filter((item) => !!item.duration);
 
         const itemsQuantity = durationTimes.length;
         const totalMsec = durationTimes.reduce((acc, item) => acc + item.duration, 0);
         const averageMsec = totalMsec / itemsQuantity;
-        dispatch(perfMeterSetCanvasRender(averageMsec, itemsQuantity));
+        dispatch(perfMeterSetResult(averageMsec, itemsQuantity));
         break;
     }
-    default:
+    default: break;
     }
-}
+};
 
 // ui update function on state change
-const updatePerfMeter = ({ info, start, stop }, { getState }) => () => {
+const updatePerfMeter = (
+    perfMeter: { info: HTMLDivElement, start: HTMLButtonElement, stop: HTMLButtonElement },
+    { getState }: { getState: () => AppState },
+) => () => {
+    const { info, start, stop } = perfMeter;
     const state = getState();
     const avgMsec = getPerfMeterAvgMsec(state) || 0;
     const itemNum = getPerfMeterItemNum(state) || 0;
@@ -106,7 +105,7 @@ const updatePerfMeter = ({ info, start, stop }, { getState }) => () => {
     }
 };
 
-export const createPerfMeter = ({ dispatch, getState }) => (perfMeterElem) => {
+export const createPerfMeter = ({ dispatch, getState }: AppStore) => (perfMeterElem: HTMLDivElement): () => void => {
     const perfMeterHeadElem = document.createElement('p');
     perfMeterHeadElem.innerText = `Performance Meter: ${smileItemsCount(getState())} Smiles`;
     const perfMeterInfoElem = document.createElement('div');
