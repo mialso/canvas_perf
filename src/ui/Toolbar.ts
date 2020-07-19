@@ -1,7 +1,8 @@
 import { moveSmileLeft, moveSmileRight } from 'smile/message';
 import { createButton } from 'ui/Button';
+import { BoundElem } from 'store/types';
 
-export const createToolbar = ({ dispatch }) => (toolbarElem) => {
+export const createToolbar: BoundElem<HTMLDivElement, void> = ({ dispatch }) => (toolbarElem) => {
     const moveLeftButton = createButton({ text: 'move left', onclick: () => dispatch(moveSmileLeft()) });
     const moveRightButton = createButton({ text: 'move right', onclick: () => dispatch(moveSmileRight()) });
     const move10RightButton = createButton({

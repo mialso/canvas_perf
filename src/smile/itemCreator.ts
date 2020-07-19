@@ -1,9 +1,9 @@
-import { COLORS } from './model';
+import { COLORS, SmileData } from './model';
 
 const SCREEN_WIDTH = 750;
 const SCREEN_HEIGHT = 750;
 
-export function createSmiles({ perLine, lines }) {
+export function createSmiles({ perLine, lines }: { perLine: number, lines: number }): SmileData[] {
     const spaceItem = SCREEN_WIDTH / (perLine + 1);
     const spaceLine = SCREEN_HEIGHT / (lines + 1);
     const items = [];
@@ -19,7 +19,7 @@ export function createSmiles({ perLine, lines }) {
     return items;
 }
 
-export function colorItems(items) {
+export function colorItems(items: SmileData[]): void {
     items.forEach((item) => {
         const colorIndex = (item.x + item.y) % 3;
         item.color = COLORS[colorIndex];

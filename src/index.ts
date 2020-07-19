@@ -4,15 +4,23 @@ import { createToolbar } from 'ui/Toolbar';
 import { createCanvas } from 'ui/Canvas';
 import { createPerfMeter } from 'ui/PerfMeter';
 
+function getDomElem(classSelector: string): Element {
+    const element = document.querySelector(`.${classSelector}`);
+    if (!element) {
+        throw new Error(`getDom: unable to find DOM element for ${classSelector} class`);
+    }
+    return element;
+}
+
 function runApplication() {
     // create store first
     const store = initStore();
     // create the ui
-    createMover(store)(document.querySelector('.MapMover'));
-    createToolbar(store)(document.querySelector('.ControlPanel'));
-    const updatePerfMeter = createPerfMeter(store)(document.querySelector('.PerfMeter'));
+    createMover(store)(getDomElem('MapMover') as HTMLDivElement);
+    createToolbar(store)(getDomElem('ControlPanel') as HTMLDivElement);
+    const updatePerfMeter = createPerfMeter(store)(getDomElem('PerfMeter') as HTMLDivElement);
     // create canvas
-    const drawCanvas = createCanvas(store)(document.getElementById('perfMe'));
+    const drawCanvas = createCanvas(store)(document.getElementById('perfMe') as HTMLCanvasElement);
 
     // render canvas first time
     drawCanvas();

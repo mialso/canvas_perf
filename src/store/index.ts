@@ -1,11 +1,18 @@
-import { applyMiddleware, createStore, combineReducers } from 'redux';
+import {
+    applyMiddleware, createStore, combineReducers, Dispatch, MiddlewareAPI,
+} from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import { smileReducer } from 'smile/reducer';
 import { moverReducer, moverController } from 'ui/controller';
-import { perfMeterReducer, perfMeterController, PERF_METER_KEY } from 'ui/PerfMeter';
+import { perfMeterReducer, perfMeterController } from 'ui/PerfMeter';
+import {
+    AppStore, AppState, AppMessage, Controller, UIState,
+} from 'store/types';
 
-function connectController(controller) {
-    return (store) => (next) => (message) => {
+function connectController(controller: Controller) {
+    return (
+        store: MiddlewareAPI<Dispatch<AppMessage>, AppState>,
+    ) => (next: Dispatch<AppMessage>) => (message: AppMessage) => {
         next(message);
         controller(store, message);
     };
@@ -16,15 +23,15 @@ const middlewares = [
     perfMeterController,
 ].map(connectController);
 
-const appReducer = combineReducers({
+const appReducer = combineReducers<AppState>({
     smile: smileReducer,
-    ui: combineReducers({
-        [PERF_METER_KEY]: perfMeterReducer,
+    ui: combineReducers<UIState>({
+        perfMeter: perfMeterReducer,
         mover: moverReducer,
     }),
 });
 
-export function initStore() {
+export function initStore(): AppStore {
     const middlewareEnchancer = applyMiddleware(...middlewares);
     const composedEnchancer = composeWithDevTools(middlewareEnchancer);
 
